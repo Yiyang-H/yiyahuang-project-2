@@ -11,18 +11,20 @@ public class ShadowLife extends AbstractGame {
     private Actor[] actors;
     private long referenceTime = System.currentTimeMillis();
 
-    private static final long TICK_SIZE = 500;
+    private static int tickRate;
+    private static int maxTicks;
     private static final int WIDTH = 1024;
     private static final int HEIGHT = 768;
     private static final int TOTAL_ACTOR_NUMBER = 6;
     private static final String TREE = "Tree";
     private static final String GATHERER = "Gatherer";
+    private static final int NUM_OF_ARGUMENTS = 3;
+    private static String filename;
 
     public ShadowLife() {
         super(WIDTH,HEIGHT,"ShadowLife");
         actors = new Actor[TOTAL_ACTOR_NUMBER];
 
-        String filename = "res/worlds/test.csv";
         try(BufferedReader br = new BufferedReader(new FileReader(filename))) {
             Scanner scanner = new Scanner(br);
             int i = 0;
@@ -44,6 +46,27 @@ public class ShadowLife extends AbstractGame {
     }
 
     public static void main(String[] args) {
+        boolean validArguments = true;
+        if(args.length != NUM_OF_ARGUMENTS) {
+            validArguments = false;
+        }
+        try {
+            tickRate = Integer.parseInt(args[0]);
+            if (tickRate < 0) {
+                validArguments = false;
+            }
+            maxTicks = Integer.parseInt(args[1]);
+            if (maxTicks < 0) {
+                validArguments = false;
+            }
+        }catch(Exception e) {
+            validArguments = false;
+        }
+        if(!validArguments){
+            System.out.println("usage: ShadowLife <tick rate> <max ticks> <world file>");
+            System.exit(-1);
+        }
+        filename = args[2];
         new ShadowLife().run();
     }
 
@@ -52,7 +75,7 @@ public class ShadowLife extends AbstractGame {
         background.drawFromTopLeft(0,0);
 
         // Check if 1 tick has passed
-        if(System.currentTimeMillis()-referenceTime >= TICK_SIZE) {
+        if(System.currentTimeMillis()-referenceTime >= tickRate) {
             referenceTime = System.currentTimeMillis();
             // Update the all actors
             for(int i = 0;i < Actor.getActNum();i++) {
