@@ -1,13 +1,13 @@
+import bagel.util.Point;
+
 public abstract class Actor {
-    private int x;
-    private int y;
+    private Point position;
     private static int actNum;
 
     public static final int TILE_SIZE = 64;
     
-    public Actor(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Actor(Point position) {
+        this.position = position;
         actNum++;
     }
 
@@ -16,20 +16,8 @@ public abstract class Actor {
     // All actors can draw on window
     public abstract void draw();
 
-    public int getX() {
-        return x;
-    }
-
-    public void changeX(int change) {
-        this.x += change;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void changeY(int change) {
-        this.y += change;
+    public Point getPosition(){
+        return this.position;
     }
 
     public static int getActNum() {

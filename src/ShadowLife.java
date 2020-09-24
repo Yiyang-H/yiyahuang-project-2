@@ -1,4 +1,5 @@
 import bagel.*;
+import bagel.util.Point;
 import java.util.Scanner;
 import java.io.FileReader;
 import java.io.BufferedReader;
@@ -15,9 +16,17 @@ public class ShadowLife extends AbstractGame {
     private static int maxTicks;
     private static final int WIDTH = 1024;
     private static final int HEIGHT = 768;
-    private static final int TOTAL_ACTOR_NUMBER = 6;
+    private static final int TOTAL_ACTOR_NUMBER = 100;
     private static final String TREE = "Tree";
+    private static final String GOLDEN_TREE = "GoldenTree";
+    private static final String STOCKPILE = "Stockpile";
+    private static final String HOARD = "Hoard";
+    private static final String PAD = "Pad";
+    private static final String FENCE = "Fence";
+    private static final String SIGN = "Sign";
+    private static final String MITOSIS_POOL = "MitosisPool";
     private static final String GATHERER = "Gatherer";
+    private static final String THIEF = "Thief";
     private static final int NUM_OF_ARGUMENTS = 3;
     private static String filename;
 
@@ -34,14 +43,47 @@ public class ShadowLife extends AbstractGame {
                 String type = columns[0];
                 int x = Integer.parseInt(columns[1]);
                 int y = Integer.parseInt(columns[2]);
-                if(type.equals(TREE)) {
-                    actors[i++] = new Tree(x,y);
-                }else if (type.equals(GATHERER)) {
-                    actors[i++] = new Gatherer(x,y);
+                Point p = new Point(x,y);
+                switch(type) {
+                    case TREE:
+                        actors[i++] = new Tree(p);
+                        break;
+                    case GOLDEN_TREE:
+                        actors[i++] = new GoldenTree(p);
+                        break;
+                    case STOCKPILE:
+                        actors[i++] = new Stockpile(p);
+                        break;
+                    case HOARD:
+                        actors[i++] = new Hoard(p);
+                        break;
+                    case PAD:
+                        actors[i++] = new Pad(p);
+                        break;
+                    case FENCE:
+                        actors[i++] = new Fence(p);
+                        break;
+                    case SIGN:
+                        actors[i++] = new Sign(p);
+                        break;
+                    case MITOSIS_POOL:
+                        actors[i++] = new MitosisPool(p);
+                        break;
+                    case GATHERER:
+                        actors[i++] = new Gatherer(p);
+                        break;
+                    case THIEF:
+                        actors[i++] = new Thief(p);
+                        break;
+                    default:
+                        break;
                 }
+
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            // Should I use IOException here?
+            System.out.println("error: file \"<file name>\" not found");
+            System.exit(-1);
         }
     }
 

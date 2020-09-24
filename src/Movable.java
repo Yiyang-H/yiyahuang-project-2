@@ -1,3 +1,3 @@
-public interface Moveable {
-    void move(int tick);
+public interface Movable {
+    void move(int tickNum);
 }
