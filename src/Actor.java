@@ -1,26 +1,28 @@
+import bagel.Image;
 import bagel.util.Point;
+import bagel.util.Vector2;
 
 public abstract class Actor {
     private Point position;
-    private static int actNum;
-
+    private Image image;
     public static final int TILE_SIZE = 64;
-    
-    public Actor(Point position) {
+
+    public Actor(Point position,Image image) {
         this.position = position;
-        actNum++;
+        this.image = image;
     }
 
-    public void update(int tickNumber) {}
-
     // All actors can draw on window
-    public abstract void draw();
+    public void draw() {
+        image.drawFromTopLeft(position.x, position.y);
+    }
 
     public Point getPosition(){
         return this.position;
     }
 
-    public static int getActNum() {
-        return actNum;
+    public void changePosition(Vector2 v) {
+        position = (v.mul(TILE_SIZE).add(position.asVector())).asPoint();
     }
+
 }

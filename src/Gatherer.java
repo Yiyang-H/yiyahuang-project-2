@@ -1,23 +1,59 @@
 import bagel.*;
 import bagel.util.Point;
 import bagel.util.Vector2;
+import java.util.ArrayList;
 
-public class Gatherer extends DirectionActor implements Movable {
+public class Gatherer extends DirectionActor {
     // Instance variable for Gatherer
-    private int direction;
-    private final Image gatherer = new Image("res/images/gatherer.png");
-    private static final int NUM_OF_DIRECTIONS = 4;
+    private boolean carrying = false;
+    private boolean active = true;
+
+    private static final ArrayList<Gatherer> GATHERERS = new ArrayList<>();
 
     public Gatherer(Point position){
-        super(position, Vector2.left);
+        super(position, new Image("res/images/gatherer.png"), Vector2.left);
+        GATHERERS.add(this);
     }
 
-    @Override
-    public void move(int tickNum) {
+    public void move() {
+        // Loop through all actors to see if gatherer is on them
+        for(Actor a : ShadowLife.ACTORS) {
+            if(a.getPosition().equals(this.getPosition())) {
+                if(a instanceof MitosisPool) {
+                    // Need to implement
+                }
+                if(a instanceof Sign) {
+                    // Need to implement
+                }
+                if(a instanceof Tree) {
+                    if(!carrying) {
+                        if(((Tree) a).anyFruit()) {
+                            ((Tree) a).changeFruitNum(-1);
+                            carrying = true;
+                            this.changeDirection(180);
+                        }
+                    }
+                }
+                if(a instanceof Hoard || a instanceof Stockpile) {
+                    if(carrying) {
+                        carrying = false;
+                        ((StockActor) a).changeFruitNum(1);
+                        this.changeDirection(180);
+                    }
+                }
+                if(a instanceof Fence) {
+                    // Need to implement
+                }
+            }
+        }
+        if(active) {
+            this.changePosition(this.getDirection());
+        }
     }
-    @Override
-    public void draw(){
-        Point p = getPosition();
-        gatherer.drawFromTopLeft(p.x,p.y);
+
+    public static void moveAll() {
+        for(Gatherer g : GATHERERS) {
+            g.move();
+        }
     }
 }

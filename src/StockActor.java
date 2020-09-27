@@ -1,9 +1,13 @@
+import bagel.Font;
+import bagel.Image;
 import bagel.util.Point;
 
 public abstract class StockActor extends Actor {
     private int fruitNum;
-    public StockActor(Point position,int fruitNum) {
-        super(position);
+    private Font font = new Font("res/VeraMono.ttf",24);
+
+    public StockActor(Point position, Image image, int fruitNum) {
+        super(position,image);
         this.fruitNum = fruitNum;
     }
 
@@ -19,6 +23,12 @@ public abstract class StockActor extends Actor {
     }
 
     public void draw(){
+        super.draw();
+        // Draw the remaining fruit excluding golden tree
+        if(!(this instanceof GoldenTree)) {
+            Point p = getPosition();
+            font.drawString(String.valueOf(fruitNum), p.x, p.y);
+        }
 
     }
 }

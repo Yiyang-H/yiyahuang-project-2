@@ -2,20 +2,16 @@ import bagel.*;
 import bagel.util.Point;
 import bagel.util.Vector2;
 
-public class Thief extends DirectionActor implements Movable {
-    private final Image thief = new Image("res/images/thief.png");
+import java.util.ArrayList;
+
+public class Thief extends DirectionActor {
+    private static final ArrayList<Thief> THIEVES = new ArrayList<>();
 
     public Thief(Point position) {
-        super(position, Vector2.up);
+        super(position, new Image("res/images/thief.png"), Vector2.up);
+        THIEVES.add(this);
     }
 
-    @Override
     public void move(int tickNum) {
-    }
-
-    @Override
-    public void draw(){
-        Point p = getPosition();
-        thief.drawFromTopLeft(p.x,p.y);
     }
 }

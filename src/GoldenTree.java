@@ -1,16 +1,9 @@
 import bagel.Image;
 import bagel.util.Point;
 
-public class GoldenTree extends Actor {
-    private final Image goldenTree = new Image("res/images/gold-tree.png");
-
-    public GoldenTree(Point position){
-        super(position);
+public class GoldenTree extends StockActor {
+    public GoldenTree(Point position) {
+        super(position, new Image("res/images/gold-tree.png"),Integer.MAX_VALUE);
     }
 
-    @Override
-    public void draw(){
-        Point p = getPosition();
-        goldenTree.drawFromTopLeft(p.x,p.y);
-    }
 }

@@ -1,5 +1,7 @@
 import bagel.*;
-import bagel.util.Point;
+import bagel.util.*;
+
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.FileReader;
 import java.io.BufferedReader;
@@ -9,14 +11,13 @@ public class ShadowLife extends AbstractGame {
     private final Image background = new Image("res/images/background.png");
     // Count number of ticks
     private int counter;
-    private Actor[] actors;
+    public static final ArrayList<Actor> ACTORS = new ArrayList<>();
     private long referenceTime = System.currentTimeMillis();
 
     private static int tickRate;
     private static int maxTicks;
     private static final int WIDTH = 1024;
     private static final int HEIGHT = 768;
-    private static final int TOTAL_ACTOR_NUMBER = 100;
     private static final String TREE = "Tree";
     private static final String GOLDEN_TREE = "GoldenTree";
     private static final String STOCKPILE = "Stockpile";
@@ -32,62 +33,11 @@ public class ShadowLife extends AbstractGame {
 
     public ShadowLife() {
         super(WIDTH,HEIGHT,"ShadowLife");
-        actors = new Actor[TOTAL_ACTOR_NUMBER];
-
-        try(BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            Scanner scanner = new Scanner(br);
-            int i = 0;
-            while(scanner.hasNext()) {
-                // Split the csv by ","
-                String[] columns = scanner.nextLine().split(",");
-                String type = columns[0];
-                int x = Integer.parseInt(columns[1]);
-                int y = Integer.parseInt(columns[2]);
-                Point p = new Point(x,y);
-                switch(type) {
-                    case TREE:
-                        actors[i++] = new Tree(p);
-                        break;
-                    case GOLDEN_TREE:
-                        actors[i++] = new GoldenTree(p);
-                        break;
-                    case STOCKPILE:
-                        actors[i++] = new Stockpile(p);
-                        break;
-                    case HOARD:
-                        actors[i++] = new Hoard(p);
-                        break;
-                    case PAD:
-                        actors[i++] = new Pad(p);
-                        break;
-                    case FENCE:
-                        actors[i++] = new Fence(p);
-                        break;
-                    case SIGN:
-                        actors[i++] = new Sign(p);
-                        break;
-                    case MITOSIS_POOL:
-                        actors[i++] = new MitosisPool(p);
-                        break;
-                    case GATHERER:
-                        actors[i++] = new Gatherer(p);
-                        break;
-                    case THIEF:
-                        actors[i++] = new Thief(p);
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-        } catch (IOException e) {
-            // Should I use IOException here?
-            System.out.println("error: file \"<file name>\" not found");
-            System.exit(-1);
-        }
     }
 
     public static void main(String[] args) {
+
+        // Checks if the input arguments are valid
         boolean validArguments = true;
         if(args.length != NUM_OF_ARGUMENTS) {
             validArguments = false;
@@ -109,7 +59,82 @@ public class ShadowLife extends AbstractGame {
             System.exit(-1);
         }
         filename = args[2];
-        new ShadowLife().run();
+
+
+        ShadowLife game = new ShadowLife();
+
+        try(BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            Scanner scanner = new Scanner(br);
+            int i = 0;
+            while(scanner.hasNext()) {
+                // Split the csv by ","
+                String[] columns = scanner.nextLine().split(",");
+                // Check if each column is well-formatted
+                // Not handled correctly yet
+                if(!isValidColumn(columns)) {
+                    System.out.println("error: in file \"" + filename + "\" at line " + (i+1));
+                }
+                String type = columns[0];
+                int x = Integer.parseInt(columns[1]);
+                int y = Integer.parseInt(columns[2]);
+                Point p = new Point(x,y);
+                switch(type) {
+                    case TREE:
+                        ACTORS.add(new Tree(p));
+                        break;
+                    case GOLDEN_TREE:
+                        ACTORS.add(new GoldenTree(p));
+                        break;
+                    case STOCKPILE:
+                        ACTORS.add(new Stockpile(p));
+                        break;
+                    case HOARD:
+                        ACTORS.add(new Hoard(p));
+                        break;
+                    case PAD:
+                        ACTORS.add(new Pad(p));
+                        break;
+                    case FENCE:
+                        ACTORS.add(new Fence(p));
+                        break;
+                    case MITOSIS_POOL:
+                        ACTORS.add(new MitosisPool(p));
+                        break;
+                    case GATHERER:
+                        ACTORS.add(new Gatherer(p));
+                        break;
+                    case THIEF:
+                        ACTORS.add(new Thief(p));
+                        break;
+                    default:
+                        break;
+                }
+                if(type.contains(SIGN)) {
+                    switch (type.substring(4)){
+                        case "Up" :
+                            ACTORS.add(new Sign(p, Vector2.up));
+                            break;
+                        case "Right" :
+                            ACTORS.add(new Sign(p, Vector2.right));
+                            break;
+                        case "Down" :
+                            ACTORS.add(new Sign(p, Vector2.down));
+                            break;
+                        case "Left" :
+                            ACTORS.add(new Sign(p, Vector2.left));
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                i++;
+            }
+        } catch (IOException e) {
+            // Should I use IOException here?
+            System.out.println("error: file \"<file name>\" not found");
+            System.exit(-1);
+        }
+        game.run();
     }
 
     @Override
@@ -119,20 +144,30 @@ public class ShadowLife extends AbstractGame {
         // Check if 1 tick has passed
         if(System.currentTimeMillis()-referenceTime >= tickRate) {
             referenceTime = System.currentTimeMillis();
-            // Update the all actors
-            for(int i = 0;i < Actor.getActNum();i++) {
-                actors[i].update(counter);
-            }
             counter++;
+            Gatherer.moveAll();
         }
 
         // Draw all actors
-        for(int i = 0;i < Actor.getActNum();i++) {
-            actors[i].draw();
+        for(Actor a : ACTORS) {
+            a.draw();
+        }
+
+        if(counter > maxTicks) {
+            System.out.println("Timed out");
+            System.exit(-1);
         }
 
         if(input.isDown(Keys.ESCAPE)) {
             Window.close();
         }
+    }
+
+    private static boolean isValidColumn(String[] column) {
+        if(column.length != 3) {
+            return false;
+        }
+        return true;
+
     }
 }
