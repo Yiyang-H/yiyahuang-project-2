@@ -23,7 +23,7 @@ public class Gatherer extends DirectionActor {
                     // Need to implement
                 }
                 if(a instanceof Sign) {
-                    // Need to implement
+                    this.toDirection(((Sign) a).getDirection());
                 }
                 if(a instanceof Tree) {
                     if(!carrying) {
@@ -38,11 +38,13 @@ public class Gatherer extends DirectionActor {
                     if(carrying) {
                         carrying = false;
                         ((StockActor) a).changeFruitNum(1);
-                        this.changeDirection(180);
                     }
+                    this.changeDirection(180);
                 }
                 if(a instanceof Fence) {
-                    // Need to implement
+                    active = false;
+                    this.changeDirection(180);
+                    this.changePosition(this.getDirection());
                 }
             }
         }

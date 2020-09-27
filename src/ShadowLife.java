@@ -146,6 +146,7 @@ public class ShadowLife extends AbstractGame {
             referenceTime = System.currentTimeMillis();
             counter++;
             Gatherer.moveAll();
+            Thief.moveAll();
         }
 
         // Draw all actors

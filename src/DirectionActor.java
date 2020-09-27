@@ -33,6 +33,10 @@ public abstract class DirectionActor extends Actor{
         }
     }
 
+    public void toDirection(Vector2 v) {
+        direction = v;
+    }
+
     public Vector2 getDirection(){
         return direction;
     }
