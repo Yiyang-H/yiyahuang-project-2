@@ -5,7 +5,6 @@ import bagel.util.Vector2;
 public abstract class Actor {
     private Point position;
     private Image image;
-    public static final int TILE_SIZE = 64;
 
     public Actor(Point position,Image image) {
         this.position = position;
@@ -22,7 +21,7 @@ public abstract class Actor {
     }
 
     public void changePosition(Vector2 v) {
-        position = (v.mul(TILE_SIZE).add(position.asVector())).asPoint();
+        position = v.add(position.asVector()).asPoint();
     }
 
 }

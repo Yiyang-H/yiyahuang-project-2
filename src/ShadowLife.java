@@ -14,6 +14,8 @@ public class ShadowLife extends AbstractGame {
     public static final ArrayList<Actor> ACTORS = new ArrayList<>();
     private long referenceTime = System.currentTimeMillis();
 
+    public static final int TILE_SIZE = 64;
+
     private static int tickRate;
     private static int maxTicks;
     private static final int WIDTH = 1024;
@@ -30,6 +32,8 @@ public class ShadowLife extends AbstractGame {
     private static final String THIEF = "Thief";
     private static final int NUM_OF_ARGUMENTS = 3;
     private static String filename;
+
+    boolean paused = false;
 
     public ShadowLife() {
         super(WIDTH,HEIGHT,"ShadowLife");
@@ -140,9 +144,18 @@ public class ShadowLife extends AbstractGame {
     @Override
     public void update(Input input) {
         background.drawFromTopLeft(0,0);
+        // Press space to pause the simulation
+        if(input.wasPressed(Keys.SPACE)) {
+            paused = paused ? false : true;
+        }
 
+        if(input.isDown(Keys.RIGHT)) {
+            tickRate = 250;
+        }else {
+            tickRate = 500;
+        }
         // Check if 1 tick has passed
-        if(System.currentTimeMillis()-referenceTime >= tickRate) {
+        if(System.currentTimeMillis()-referenceTime >= tickRate && !paused) {
             referenceTime = System.currentTimeMillis();
             counter++;
             Gatherer.moveAll();

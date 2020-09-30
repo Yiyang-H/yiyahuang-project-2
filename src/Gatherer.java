@@ -16,15 +16,25 @@ public class Gatherer extends DirectionActor {
     }
 
     public void move() {
-        // Loop through all actors to see if gatherer is on them
+        if(active) {
+            this.changePosition(this.getDirection().mul(ShadowLife.TILE_SIZE));
+        }
+        // Loop through all actors to see if this gatherer is on them
         for(Actor a : ShadowLife.ACTORS) {
             if(a.getPosition().equals(this.getPosition())) {
+                if(a instanceof Fence) {
+                    active = false;
+                    this.changePosition(this.getDirection().mul(-1 * ShadowLife.TILE_SIZE));
+                }
+
                 if(a instanceof MitosisPool) {
                     // Need to implement
                 }
+
                 if(a instanceof Sign) {
                     this.toDirection(((Sign) a).getDirection());
                 }
+
                 if(a instanceof Tree) {
                     if(!carrying) {
                         if(((Tree) a).anyFruit()) {
@@ -34,6 +44,7 @@ public class Gatherer extends DirectionActor {
                         }
                     }
                 }
+
                 if(a instanceof Hoard || a instanceof Stockpile) {
                     if(carrying) {
                         carrying = false;
@@ -41,15 +52,8 @@ public class Gatherer extends DirectionActor {
                     }
                     this.changeDirection(180);
                 }
-                if(a instanceof Fence) {
-                    active = false;
-                    this.changeDirection(180);
-                    this.changePosition(this.getDirection());
-                }
+
             }
-        }
-        if(active) {
-            this.changePosition(this.getDirection());
         }
     }
 
