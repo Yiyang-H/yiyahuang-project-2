@@ -1,13 +1,12 @@
 import bagel.Font;
-import bagel.Image;
 import bagel.util.Point;
 
 public abstract class StockActor extends Actor {
     private int fruitNum;
     private Font font = new Font("res/VeraMono.ttf",24);
 
-    public StockActor(Point position, Image image, int fruitNum) {
-        super(position,image);
+    public StockActor(Point position, String imageFile, int fruitNum) {
+        super(position,imageFile);
         this.fruitNum = fruitNum;
     }
 
@@ -30,5 +29,9 @@ public abstract class StockActor extends Actor {
             font.drawString(String.valueOf(fruitNum), p.x, p.y);
         }
 
+    }
+
+    public int getFruitNum() {
+        return fruitNum;
     }
 }

@@ -1,98 +1,115 @@
-import bagel.*;
 import bagel.util.Point;
 import bagel.util.Vector2;
 
 import java.util.ArrayList;
 
-public class Thief extends DirectionActor {
+public class Thief extends MovableActor {
+    public static final String TYPE = "Thief";
+
     private boolean carrying = false;
     private boolean consuming = false;
-    private boolean active = true;
 
-    private static final ArrayList<Thief> THIEVES = new ArrayList<>();
+    public static final ArrayList<Thief> LIST = new ArrayList<>();
 
 
 
     public Thief(Point position) {
-        super(position, new Image("res/images/thief.png"), Vector2.up);
-        THIEVES.add(this);
+        super(position, "res/images/thief.png", Vector2.up);
+        LIST.add(this);
     }
 
     public void move() {
-        if(active) {
-            this.changePosition(this.getDirection().mul(ShadowLife.TILE_SIZE));
+        if(this.isActive()) {
+            this.changePosition(this.getDirection());
+            // return;   return here to avoid further actions
         }
 
-        // Loop through all actors to see if this thief is on them
-        for(Actor a : ShadowLife.ACTORS) {
-            if(a.getPosition().equals(this.getPosition())) {
-                if(a instanceof Fence) {
-                    active = false;
-                    this.changePosition(this.getDirection().mul(-1 * ShadowLife.TILE_SIZE));
-                }
+        Actor temp;
+        if(this.isOn(Fence.TYPE) != null) {
+            this.setActive(false);
+            this.changePosition(this.getDirection().mul(-1));
+        }
 
-                if(a instanceof MitosisPool) {
-                    // Need to implement
-                }
+        if(this.isOn(Pool.TYPE) != null) {
+            Point currentP = this.getPosition();
+            Vector2 currentD = this.getDirection();
 
-                if(a instanceof Sign) {
-                    this.toDirection(((Sign) a).getDirection());
-                }
+            Thief first = new Thief(currentP);
+            first.toDirection(currentD);
+            first.changeDirection(CLOCKWISE_90);
+            first.move();
 
-                if(a instanceof Pad) {
-                    consuming = true;
-                }
+            this.changeDirection(-1 * CLOCKWISE_90);
+            this.move();
+            // initialise the current thief
+            this.carrying = false;
+            this.consuming = false;
+        }
 
-                if(a instanceof Gatherer) {
-                    this.changeDirection(270);
-                }
+        if((temp = this.isOn(Sign.TYPE)) != null) {
+            this.toDirection(((Sign) temp).getDirection());
+        }
 
-                if(a instanceof Tree) {
-                    if(!carrying) {
-                        if(((Tree) a).anyFruit()) {
-                            ((Tree) a).changeFruitNum(-1);
-                            this.carrying = true;
-                        }
-                    }
-                }
+        if(this.isOn(Pad.TYPE) != null) {
+            consuming = true;
+        }
 
-                if(a instanceof Hoard) {
-                    if(consuming) {
-                        consuming = false;
-                        if(!carrying) {
-                            if(((Hoard) a).anyFruit()) {
-                                carrying = true;
-                                ((Hoard) a).changeFruitNum(-1);
-                            }else {
-                                this.changeDirection(90);
-                            }
-                        }
-                    }else if(carrying) {
-                        carrying = false;
-                        ((Hoard) a).changeFruitNum(1);
-                        this.changeDirection(90);
-                    }
+        if(this.isOn(Gatherer.TYPE) != null) {
+            this.changeDirection(-1 * CLOCKWISE_90);
+        }
+
+        if((temp = this.isOn(Tree.TYPE)) != null) {
+            if(!carrying) {
+                Tree tree = (Tree) temp;
+                if(tree.anyFruit()) {
+                    tree.changeFruitNum(-1);
+                    carrying = true;
                 }
-                if(a instanceof Stockpile) {
-                    if(!carrying) {
-                        if(((Stockpile) a).anyFruit()) {
-                            carrying = true;
-                            consuming = false;
-                            ((Stockpile) a).changeFruitNum(-1);
-                            this.changeDirection(90);
-                        }
+            }
+        }
+
+        if(this.isOn(GoldenTree.TYPE) != null) {
+            carrying = true;
+        }
+
+        if((temp = this.isOn(Hoard.TYPE)) != null) {
+            Hoard hoard = (Hoard) temp;
+            if(consuming) {
+                consuming = false;
+                if(!carrying) {
+                    if(hoard.anyFruit()) {
+                        carrying = true;
+                        hoard.changeFruitNum(-1);
                     }else {
-                        this.changeDirection(90);
+                        this.changeDirection(CLOCKWISE_90);
                     }
                 }
+            }else if(carrying) {
+                carrying = false;
+                hoard.changeFruitNum(1);
+                this.changeDirection(CLOCKWISE_90);
+            }
+        }
 
+        if((temp = this.isOn(Stockpile.TYPE)) != null) {
+            Stockpile stockpile = (Stockpile) temp;
+            if(!carrying) {
+                if(stockpile.anyFruit()) {
+                    carrying = true;
+                    consuming = false;
+                    stockpile.changeFruitNum(-1);
+                    this.changeDirection(CLOCKWISE_90);
+                }
+            }else {
+                this.changeDirection(CLOCKWISE_90);
             }
         }
     }
 
     public static void moveAll() {
-        for(Thief t : THIEVES) {
-            t.move();
+        int size = LIST.size();
+        for(int i = 0;i<size;i++) {
+            LIST.get(i).move();
         }
     }
 }

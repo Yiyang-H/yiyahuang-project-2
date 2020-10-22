@@ -1,65 +1,89 @@
-import bagel.*;
 import bagel.util.Point;
 import bagel.util.Vector2;
 import java.util.ArrayList;
 
-public class Gatherer extends DirectionActor {
+public class Gatherer extends MovableActor {
+    public static final String TYPE = "Gatherer";
     // Instance variable for Gatherer
     private boolean carrying = false;
-    private boolean active = true;
 
-    private static final ArrayList<Gatherer> GATHERERS = new ArrayList<>();
+    public static final ArrayList<Gatherer> LIST = new ArrayList<>();
 
     public Gatherer(Point position){
-        super(position, new Image("res/images/gatherer.png"), Vector2.left);
-        GATHERERS.add(this);
+        super(position, "res/images/gatherer.png", Vector2.left);
+        LIST.add(this);
     }
 
+    @Override
     public void move() {
-        if(active) {
-            this.changePosition(this.getDirection().mul(ShadowLife.TILE_SIZE));
+        // Move the Gatherer
+        if(this.isActive()) {
+            this.changePosition(this.getDirection());
         }
-        // Loop through all actors to see if this gatherer is on them
-        for(Actor a : ShadowLife.ACTORS) {
-            if(a.getPosition().equals(this.getPosition())) {
-                if(a instanceof Fence) {
-                    active = false;
-                    this.changePosition(this.getDirection().mul(-1 * ShadowLife.TILE_SIZE));
-                }
 
-                if(a instanceof MitosisPool) {
-                    // Need to implement
-                }
+        // Declare a temporary actor in case we need to modify
+        // the actor when we stand on it
+        Actor temp;
+        if((this.isOn(Fence.TYPE)) != null) {
+            this.setActive(false);
+            this.changePosition(this.getDirection().mul(-1));
+        }
 
-                if(a instanceof Sign) {
-                    this.toDirection(((Sign) a).getDirection());
-                }
+        if((this.isOn(Pool.TYPE)) != null) {
+            Point currentP = this.getPosition();
+            Vector2 currentD = this.getDirection();
 
-                if(a instanceof Tree) {
-                    if(!carrying) {
-                        if(((Tree) a).anyFruit()) {
-                            ((Tree) a).changeFruitNum(-1);
-                            carrying = true;
-                            this.changeDirection(180);
-                        }
-                    }
-                }
+            Gatherer first = new Gatherer(currentP);
+            first.toDirection(currentD);
+            first.changeDirection(CLOCKWISE_90);
+            first.move();
 
-                if(a instanceof Hoard || a instanceof Stockpile) {
-                    if(carrying) {
-                        carrying = false;
-                        ((StockActor) a).changeFruitNum(1);
-                    }
-                    this.changeDirection(180);
-                }
+            this.changeDirection(-1*CLOCKWISE_90);
+            this.move();
+            this.carrying = false;
+        }
 
+        if((temp = this.isOn(Sign.TYPE)) != null) {
+            this.toDirection(((Sign) temp).getDirection());
+        }
+
+        if((temp = this.isOn(Tree.TYPE)) != null) {
+            if(!carrying) {
+                if(((Tree) temp).anyFruit()) {
+                    ((Tree) temp).changeFruitNum(-1);
+                    carrying = true;
+                    this.changeDirection(CLOCKWISE_180);
+                }
             }
+        }
+
+        if((this.isOn(GoldenTree.TYPE)) != null) {
+            carrying = true;
+        }
+
+        if((temp = this.isOn(Hoard.TYPE)) != null) {
+            if(carrying) {
+                carrying = false;
+                ((StockActor) temp).changeFruitNum(1);
+            }
+            this.changeDirection(CLOCKWISE_180);
+        }
+
+        if((temp = this.isOn(Stockpile.TYPE)) != null) {
+            if(carrying) {
+                carrying = false;
+                ((StockActor) temp).changeFruitNum(1);
+            }
+            this.changeDirection(CLOCKWISE_180);
         }
     }
 
     public static void moveAll() {
-        for(Gatherer g : GATHERERS) {
-            g.move();
+        // Using this approach will not move the new added Gatherers
+        // Can be done with iterator but this works fine as well
+        int size = LIST.size();
+        for(int i = 0;i<size;i++) {
+            LIST.get(i).move();
         }
     }
 }
