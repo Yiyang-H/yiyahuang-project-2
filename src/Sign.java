@@ -1,16 +1,41 @@
 import bagel.util.Point;
 import bagel.util.Vector2;
-
 import java.util.ArrayList;
 
+/**
+ * The Sign element in the game.
+ */
 public class Sign extends DirectionActor {
+    /**
+     * The type of this element.
+     */
     public static final String TYPE = "Sign";
+    /**
+     * This list stores all gatherer elements in the game.
+     */
     public static final ArrayList<Sign> LIST = new ArrayList<>();
+    /**
+     * A constant string indicating up direction.
+     */
     public static final String UP = "Up";
+    /**
+     * A constant string indication right direction.
+     */
     public static final String RIGHT = "Right";
+    /**
+     * A constant string indication down direction.
+     */
     public static final String DOWN = "Down";
+    /**
+     * A constant string indication left direction.
+     */
     public static final String LEFT = "Left";
 
+    /**
+     * The constructor of the Sign class.
+     * @param position The position of the Sign.
+     * @param type The direction type of the Sign.
+     */
     public Sign(Point position,String type) {
         super(position,mapImageFile(type),mapVector(type));
         LIST.add(this);

@@ -1,13 +1,18 @@
 import bagel.*;
 import bagel.util.*;
-
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.FileReader;
 import java.io.BufferedReader;
 
+/**
+ * This class simulates a world with different Actors.
+ */
 public class ShadowLife extends AbstractGame {
+    /**
+     * The size of a tile.
+     */
     public static final int TILE_SIZE = 64;
     private static final int WIDTH = 1024;
     private static final int HEIGHT = 768;
@@ -29,13 +34,20 @@ public class ShadowLife extends AbstractGame {
     private int counter;
     private long referenceTime = System.currentTimeMillis();
 
-    boolean paused = false;
+    private boolean paused = false;
 
+    /**
+     * The constructor of ShadowLife class.
+     */
     public ShadowLife() {
         super(WIDTH,HEIGHT,"ShadowLife");
         loadActors();
     }
 
+    /**
+     * The main method of the program, requires formatted args as input.
+     * @param args Requires 3 arguments: tick rate, max ticks, world file.
+     */
     public static void main(String[] args) {
         // Checks if the input arguments are valid
         boolean validArguments = true;
@@ -63,6 +75,11 @@ public class ShadowLife extends AbstractGame {
         game.run();
     }
 
+    /**
+     * Render the simulation, perform actions based on input and prescribed
+     * algorithms.
+     * @param input The input given for this frame.
+     */
     @Override
     public void update(Input input) {
         background.drawFromTopLeft(0,0);
@@ -73,7 +90,6 @@ public class ShadowLife extends AbstractGame {
 
         // Check if 1 tick has passed
         if(System.currentTimeMillis()-referenceTime >= tickRate && !paused) {
-            // System.out.println("Tick: "+counter);
             referenceTime = System.currentTimeMillis();
             counter++;
             MovableActor.moveAll();

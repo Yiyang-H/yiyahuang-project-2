@@ -1,23 +1,36 @@
 import bagel.util.Point;
 import bagel.util.Vector2;
-
 import java.util.ArrayList;
 
+/**
+ * The Thief element in the game.
+ */
 public class Thief extends MovableActor {
+    /**
+     * The type of this element.
+     */
     public static final String TYPE = "Thief";
 
     private boolean carrying = false;
     private boolean consuming = false;
 
+    /**
+     * This list stores all Thief elements in the game.
+     */
     public static final ArrayList<Thief> LIST = new ArrayList<>();
 
-
-
+    /**
+     * The constructor of the Thief class.
+     * @param position The position of the Thief.
+     */
     public Thief(Point position) {
         super(position, "res/images/thief.png", Vector2.up);
         LIST.add(this);
     }
 
+    /**
+     * The move method moves this gatherer according to an algorithm.
+     */
     public void move() {
         if(this.isActive()) {
             this.changePosition(this.getDirection());
@@ -106,6 +119,9 @@ public class Thief extends MovableActor {
         }
     }
 
+    /**
+     * The moveAll method moves all Gatherers in the LIST.
+     */
     public static void moveAll() {
         int size = LIST.size();
         for(int i = 0;i<size;i++) {

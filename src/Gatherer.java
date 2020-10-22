@@ -2,18 +2,32 @@ import bagel.util.Point;
 import bagel.util.Vector2;
 import java.util.ArrayList;
 
+/**
+ * The gatherer element in the game.
+ */
 public class Gatherer extends MovableActor {
+    /**
+     * The type of this element.
+     */
     public static final String TYPE = "Gatherer";
-    // Instance variable for Gatherer
     private boolean carrying = false;
-
+    /**
+     * This list stores all gatherer elements in the game.
+     */
     public static final ArrayList<Gatherer> LIST = new ArrayList<>();
 
+    /**
+     * The constructor of the Gatherer class.
+     * @param position The position of the gatherer.
+     */
     public Gatherer(Point position){
         super(position, "res/images/gatherer.png", Vector2.left);
         LIST.add(this);
     }
 
+    /**
+     * The move method moves this gatherer according to an algorithm.
+     */
     @Override
     public void move() {
         // Move the Gatherer
@@ -78,6 +92,9 @@ public class Gatherer extends MovableActor {
         }
     }
 
+    /**
+     * The moveAll method moves all Gatherers in the LIST.
+     */
     public static void moveAll() {
         // Using this approach will not move the new added Gatherers
         // Can be done with iterator but this works fine as well
