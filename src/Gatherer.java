@@ -73,6 +73,7 @@ public class Gatherer extends MovableActor {
 
         if((this.isOn(GoldenTree.TYPE)) != null) {
             carrying = true;
+            this.changeDirection(CLOCKWISE_180);
         }
 
         if((temp = this.isOn(Hoard.TYPE)) != null) {

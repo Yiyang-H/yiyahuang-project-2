@@ -29,12 +29,11 @@ public class Thief extends MovableActor {
     }
 
     /**
-     * The move method moves this gatherer according to an algorithm.
+     * The move method moves this Thief according to an algorithm.
      */
     public void move() {
         if(this.isActive()) {
             this.changePosition(this.getDirection());
-            // return;   return here to avoid further actions
         }
 
         Actor temp;
@@ -120,7 +119,7 @@ public class Thief extends MovableActor {
     }
 
     /**
-     * The moveAll method moves all Gatherers in the LIST.
+     * The moveAll method moves all Thieves in the LIST.
      */
     public static void moveAll() {
         int size = LIST.size();

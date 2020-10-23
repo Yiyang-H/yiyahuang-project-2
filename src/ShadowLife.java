@@ -31,7 +31,7 @@ public class ShadowLife extends AbstractGame {
     private final ArrayList<StockActor> orderOfStockpileAndHoard = new ArrayList<>();
 
     // Count number of ticks
-    private int counter;
+    private int counter = 0;
     private long referenceTime = System.currentTimeMillis();
 
     private boolean paused = false;
@@ -108,17 +108,17 @@ public class ShadowLife extends AbstractGame {
             }
         }
 
+        if(counter > maxTicks) {
+            System.out.println("Timed out");
+            System.exit(-1);
+        }
+
         if(MovableActor.allInactive()) {
             System.out.println(counter + " ticks");
             for(StockActor s : orderOfStockpileAndHoard) {
                 System.out.println(s.getFruitNum());
             }
-            System.exit(-1);
-        }
-
-        if(counter > maxTicks) {
-            System.out.println("Timed out");
-            System.exit(-1);
+            System.exit(0);
         }
 
         if(input.isDown(Keys.ESCAPE)) {
